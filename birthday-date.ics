@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Janjan//Birthday Invitation//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:yanang-birthday-20261113@invitation.local
+DTSTAMP:20261027T000000Z
+DTSTART:20261113T000000Z
+DTEND:20261113T010000Z
+SUMMARY:Yanang's Belated Birthday Celebration
+LOCATION:Bayani Hall\, Dagupan\, Pangasinan
+DESCRIPTION:A birthday date with Janjan. Theme: red and wine red.
+END:VEVENT
+END:VCALENDAR
