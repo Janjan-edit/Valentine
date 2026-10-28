@@ -1,8 +1,44 @@
-function emailJanjan(subject, body) {
-            const compose = new URL('https://mail.google.com/mail/');
-            compose.search = new URLSearchParams({ view: 'cm', fs: '1', to: 'johnalfredjauod05@gmail.com', su: subject, body }).toString();
-            window.open(compose.href, '_blank', 'noopener,noreferrer');
+// FormSubmit handles email delivery; the recipient must activate their inbox once.
+const ticketEmailEndpoint = 'https://formsubmit.co/ajax/johnalfredjauod05@gmail.com';
+let ticketEmailPending = false;
+async function emailJanjan(subject, body, button, status) {
+    if (ticketEmailPending) {
+        status.textContent = 'Another ticket is sending. Please wait a moment.';
+        return;
+    }
+    const emailInput = document.getElementById('ticketCopyEmail');
+    const copyEmail = emailInput.value.trim();
+    emailInput.value = copyEmail;
+    if (!emailInput.checkValidity()) {
+        status.textContent = 'Please enter a valid email address for your copy, or leave it blank.';
+        emailInput.reportValidity(); emailInput.focus(); return;
+    }
+    const payload = { _subject: subject, _template: 'table', Ticket: subject, 'Our plan': body };
+    if (copyEmail) { payload.email = copyEmail; payload._replyto = copyEmail; payload._cc = copyEmail; }
+    ticketEmailPending = true;
+    const originalLabel = button.textContent;
+    button.disabled = true; button.textContent = 'Sending your ticket…';
+    status.textContent = 'Sending your ticket. Please keep this page open.';
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    try {
+        const response = await fetch(ticketEmailEndpoint, {
+            method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(payload), signal: controller.signal
+        });
+        const result = await response.json();
+        if (typeof result.message === 'string' && /needs activation/i.test(result.message)) {
+            status.textContent = 'One-time setup needed: Janjan must open the FormSubmit email at johnalfredjauod05@gmail.com and click Activate Form. Then press Send again. Your ticket has not been confirmed as delivered yet.';
+            return;
         }
+        if (!response.ok || !(result.success === true || result.success === 'true')) throw new Error('Submission rejected');
+        status.textContent = 'Ticket submitted for email delivery to Janjan' + (copyEmail ? ' and a copy to ' + copyEmail : '') + '. ❤️ If this is the first submission, Janjan must activate FormSubmit from his inbox first. Please check Spam too.';
+    } catch (error) {
+        status.textContent = error.name === 'AbortError' ? 'The request timed out; delivery is unconfirmed. Check your inbox before retrying.' : 'Email submission could not be confirmed. Check your connection and try again, or save your ticket as an image.';
+    } finally {
+        clearTimeout(timeout); ticketEmailPending = false; button.disabled = false; button.textContent = originalLabel;
+    }
+}
         const plannerQuestions = [
             { title: 'Ano gusto mong gawin, babii?', options: ['Take photos 📸', 'Eat together 🍽️', 'Exchange letters 💌', 'Surprise me! 🎁'] },
             { title: 'Anong birthday treat mo?', options: ['Cake 🎂', 'Chocolates 🍫', 'Flowers 🌹', 'Ikaw bahala, babii ❤️'] },
@@ -58,11 +94,10 @@ function emailJanjan(subject, body) {
                 host.append(envelope, label, wish);
             } else {
                 const summary = document.createElement('div'); summary.className = 'plan-summary'; summary.textContent = birthdayPlanText();
-                const copy = document.createElement('button'); copy.className = 'plan-copy'; copy.textContent = 'Send my plan via Gmail 💌';
+                const copy = document.createElement('button'); copy.className = 'plan-copy'; copy.textContent = 'Send my plan to Janjan 💌';
                 const status = document.createElement('p'); status.className = 'copy-status'; status.setAttribute('role', 'status');
                 copy.onclick = () => {
-                    emailJanjan('Our birthday date plan ❤️', birthdayPlanText());
-                    status.textContent = 'Finish sending your plan in the Gmail tab, babii. ❤️';
+                    emailJanjan('Our birthday date plan ❤️', birthdayPlanText(), copy, status);
                 };
                 const save = document.createElement('button'); save.className = 'plan-copy save-ticket'; save.textContent = 'Save my birthday plan 🎟️';
                 save.onclick = () => saveTicketImage(birthdayPlanText(), 'our-birthday-plan.png', status);
@@ -102,6 +137,17 @@ function emailJanjan(subject, body) {
             adventureField('adventureCustomIdea').required = !adventureField('customIdeaField').hidden;
             adventureField('adventureCustomPlace').required = !adventureField('customPlaceField').hidden;
             adventureField('adventureDate').required = !adventureField('specificDateField').hidden;
+            const ready = isAdventureComplete();
+            adventureField('makeDateTicket').disabled = !ready;
+            adventureField('adventureHelp').textContent = ready ? 'Your answers are ready — make your ticket, babii! ❤️' : 'Answer all four questions and fill in any custom details to unlock your ticket. The wish list is optional.';
+            if (!ready) ticketCreated = false;
+        }
+        function isAdventureComplete() {
+            return ['adventureAgain', 'adventureIdea', 'adventurePlace', 'adventureTiming'].every(id => adventureField(id).value.trim()) &&
+                ['adventureCustomIdea', 'adventureCustomPlace', 'adventureDate'].every(id => {
+                    const field = adventureField(id);
+                    return !field.required || (Boolean(field.value.trim()) && field.validity.valid);
+                });
         }
         function adventureText() {
             const customIdea = adventureField('adventureIdea').value === 'My own idea ✨';
@@ -139,7 +185,9 @@ function emailJanjan(subject, body) {
         adventureField('adventureForm').addEventListener('input', () => { updateAdventureFields(); updateDateTicket(); saveAdventure(); });
         adventureField('adventureForm').addEventListener('change', () => { updateAdventureFields(); updateDateTicket(); saveAdventure(); });
         adventureField('adventureForm').addEventListener('submit', event => {
-            event.preventDefault(); ticketCreated = true; updateDateTicket(); saveAdventure(); plannerConfetti();
+            event.preventDefault();
+            if (!isAdventureComplete()) { updateAdventureFields(); updateDateTicket(); return; }
+            ticketCreated = true; updateDateTicket(); saveAdventure(); plannerConfetti();
             adventureField('dateTicket').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'nearest' });
         });
         const dateJarIdeas = ['Café hopping ☕', 'Picnic 🧺', 'Movie night 🎬', 'Sunset walk 🌅', 'Cooking together 🍳', 'Bookstore browsing and coffee 📚', 'A photo walk with silly poses 📸', 'Try a new dessert together 🍰', 'Board games and snacks 🎲', 'Make a playlist for each other 🎶'];
@@ -160,8 +208,8 @@ function emailJanjan(subject, body) {
             adventureField('jarResult').textContent = drawnIdea + ' — added to our plan, babii! ❤️';
         };
         adventureField('copyDateTicket').onclick = () => {
-            emailJanjan('Our next little adventure ❤️', adventureText());
-            adventureField('dateTicketStatus').textContent = 'Finish sending your ticket in the Gmail tab, babii. ❤️';
+            if (!isAdventureComplete()) { updateAdventureFields(); updateDateTicket(); return; }
+            emailJanjan('Our next little adventure ❤️', adventureText(), adventureField('copyDateTicket'), adventureField('dateTicketStatus'));
         };
         const celebrationStart = new Date('2026-11-13T08:00:00+08:00').getTime();
         function updateCountdown() {
@@ -391,7 +439,7 @@ async function saveTicketImage(text, filename, status) {
         setTimeout(() => URL.revokeObjectURL(url), 60000);
         status.textContent = 'Your keepsake image is ready! Check your downloads, babii. ❤️';
     } catch {
-        status.textContent = 'The image could not be saved. You can still send your plan through Gmail.';
+        status.textContent = 'The image could not be saved. You can still email your plan with the Send button.';
     }
 }
 document.getElementById('saveDateTicket').addEventListener('click', () => {

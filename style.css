@@ -738,6 +738,7 @@
         .date-ticket[hidden], .jar-actions[hidden], .adventure-field[hidden] { display: none; }
 
 /* Styles for individual page elements. */
+.plan-copy:disabled { opacity: .45; cursor: not-allowed; }
 .page-shortcuts { position: sticky; top: max(8px, env(safe-area-inset-top)); z-index: 20; display: flex; justify-content: space-around; gap: 4px; padding: 6px; margin-bottom: 28px; background: #fff7eef5; border: 1px solid #d8a2ad; border-radius: 28px; box-shadow: 0 6px 24px #791b3426; }
 .page-shortcuts a { color: #791b34; text-decoration: none; font-size: .85rem; padding: 13px 10px; border-radius: 22px; min-height: 44px; display: flex; align-items: center; }
 .page-shortcuts a:hover, .page-shortcuts a:focus-visible { background: #791b34; color: white; }

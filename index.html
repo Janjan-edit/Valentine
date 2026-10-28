@@ -75,33 +75,40 @@
             </div>
             
             <!-- Photo Gallery Section -->
+            <section class="date-planner" aria-labelledby="ticketEmailTitle">
+                <h2 id="ticketEmailTitle">A copy for you, babii 💌</h2>
+                <label class="adventure-field" for="ticketCopyEmail">Your email address (optional)
+                    <input type="email" id="ticketCopyEmail" autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com" aria-describedby="ticketEmailHelp">
+                </label>
+                <p class="planner-hint" id="ticketEmailHelp">Add your email to receive a copy of either ticket when you press Send. Tickets go to johnalfredjauod05@gmail.com through FormSubmit. Your email is used for delivery and isn’t saved on this device.</p>
+            </section>
             <section class="date-planner" id="ourPlans" tabindex="-1" aria-labelledby="plannerTitle">
                 <h2 id="plannerTitle">Plan our birthday date ❤️</h2>
                 <p class="planner-hint element-style-4">A few little choices to make this day yours, babii.</p>
                 <div id="plannerContent"></div>
-                <p class="planner-hint">Saved on this device when browser storage is available. Send your plan to Janjan through Gmail.</p>
+                <p class="planner-hint">Saved on this device when browser storage is available. Press Send to email your ticket to Janjan.</p>
             </section>
             <section class="date-planner" aria-labelledby="adventureTitle">
                 <h2 id="adventureTitle">Our next little adventure ❤️</h2>
                 <p class="planner-hint element-style-5">After your birthday, there are still so many memories to make.</p>
                 <form class="adventure-form" id="adventureForm">
                     <label class="adventure-field">Gusto mo ulit makipag-date sa akin, babii?
-                        <select id="adventureAgain"><option value="">Choose your answer…</option><option>Syempre ❤️</option><option>Always naman 🥰</option><option>Ako naman magpa-plan 🤭</option><option>Let’s talk about it 💌</option></select>
+                        <select id="adventureAgain" required><option value="">Choose your answer…</option><option>Syempre ❤️</option><option>Always naman 🥰</option><option>Ako naman magpa-plan 🤭</option><option>Let’s talk about it 💌</option></select>
                     </label>
                     <label class="adventure-field">Anong date ang gusto mong subukan?
-                        <select id="adventureIdea"><option value="">Choose a date idea…</option><option>Café hopping ☕</option><option>Picnic 🧺</option><option>Movie night 🎬</option><option>Sunset walk 🌅</option><option>Cooking together 🍳</option><option>My own idea ✨</option></select>
+                        <select id="adventureIdea" required><option value="">Choose a date idea…</option><option>Café hopping ☕</option><option>Picnic 🧺</option><option>Movie night 🎬</option><option>Sunset walk 🌅</option><option>Cooking together 🍳</option><option>My own idea ✨</option></select>
                     </label>
                     <label class="adventure-field" id="customIdeaField" hidden>Your own date idea
                         <input id="adventureCustomIdea" maxlength="200" placeholder="What would make you smile, babii?">
                     </label>
                     <label class="adventure-field">Saan mo gustong pumunta?
-                        <select id="adventurePlace"><option>Somewhere nearby</option><option>The beach</option><option>Baguio</option><option>Let’s choose together</option><option>A place I have in mind 📍</option></select>
+                        <select id="adventurePlace" required><option value="">Choose a place…</option><option>Somewhere nearby</option><option>The beach</option><option>Baguio</option><option>Let’s choose together</option><option>A place I have in mind 📍</option></select>
                     </label>
                     <label class="adventure-field" id="customPlaceField" hidden>A place you have in mind
                         <input id="adventureCustomPlace" maxlength="200" placeholder="Name your dream spot">
                     </label>
                     <label class="adventure-field">Kailan ka free, babii?
-                        <select id="adventureTiming"><option>Let’s decide together</option><option>Surprise me</option><option>I have a date in mind 📅</option></select>
+                        <select id="adventureTiming" required><option value="">Choose when…</option><option>Let’s decide together</option><option>Surprise me</option><option>I have a date in mind 📅</option></select>
                     </label>
                     <label class="adventure-field" id="specificDateField" hidden>Choose a date
                         <input id="adventureDate" type="date">
@@ -109,7 +116,8 @@
                     <label class="adventure-field">May gusto ka bang gawin natin na hindi pa natin nagagawa?
                         <textarea id="adventureWish" maxlength="500" placeholder="Our little adventure wish list (optional)"></textarea>
                     </label>
-                    <button class="plan-copy" type="submit">Make our next date ticket 🎟️</button>
+                    <button class="plan-copy" id="makeDateTicket" type="submit" aria-describedby="adventureHelp" disabled>Make our next date ticket 🎟️</button>
+                    <p class="planner-hint" id="adventureHelp">Answer the four questions above to unlock your ticket. The wish list is optional.</p>
                 </form>
                 <div class="date-jar">
                     <h3 class="planner-question">Can’t decide? Pick from our date jar!</h3>
@@ -121,11 +129,11 @@
                     <h3 class="planner-question">Our next date ticket 🎟️</h3>
                     <p class="planner-hint">A little idea for us to plan together.</p>
                     <div class="plan-summary" id="dateTicketText"></div>
-                    <button class="plan-copy" id="copyDateTicket">Send to Janjan via Gmail 💌</button>
+                    <button class="plan-copy" id="copyDateTicket">Send ticket to Janjan 💌</button>
                     <button class="plan-copy save-ticket" id="saveDateTicket">Save ticket as image 🎟️</button>
                     <p class="copy-status" id="dateTicketStatus" role="status"></p>
                 </div>
-                <p class="planner-hint">Your ideas stay on this device when browser storage is available. Send your ticket to Janjan through Gmail.</p>
+                <p class="planner-hint">Your ideas stay on this device when browser storage is available. Press Send to email your ticket to Janjan.</p>
             </section>
             <div class="photo-section" id="birthdayPhotos" tabindex="-1">
                 <div class="photo-header">The Birthday Girl, My Beautiful Yanang 📸</div>
